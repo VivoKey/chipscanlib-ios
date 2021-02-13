@@ -24,7 +24,7 @@ let package = Package(
             dependencies: ["Alamofire"]),
         .testTarget(
             name: "chipscanlib-swiftTests",
-            dependencies: ["chipscanlib-swift", "Alamofire"]),
+            dependencies: ["chipscanlib-swift"]),
     ]
     
 )
