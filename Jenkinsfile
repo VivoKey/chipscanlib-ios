@@ -1,12 +1,9 @@
 pipeline {
     agent {label 'ios'}
-	environment {
-		PATH = "/usr/local/bin:$HOME/.rbenv/bin:$PATH"
-	}
     stages {
         stage ('Initialize') {
             steps {
-				sh 'rbenv init -'
+				sh 'xcode-select --install'
                 sh 'bundle install --path=./vendor/bundle'
             }
         }
