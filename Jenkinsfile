@@ -8,7 +8,8 @@ pipeline {
             steps {
 				sh 'rbenv init -'
 				sh 'rbenv local 2.7.2'
-                sh 'bundle install --path=./vendor/bundle'
+                sh "bundle config set --local path './vendor/bundle'"
+				sh 'bundle install'
             }
         }
 
