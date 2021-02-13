@@ -7,7 +7,6 @@ pipeline {
         stage ('Initialize') {
             steps {
 				sh 'rbenv init -'
-				sh 'gem install bundle'
                 sh 'bundle install'
             }
         }
