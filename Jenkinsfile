@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage ('Initialize') {
             steps {
-				sh 'rbenv init'
+				sh 'rbenv init -'
 				sh 'rbenv local 2.7.2'
                 sh 'bundle install --path=./vendor/bundle'
             }
