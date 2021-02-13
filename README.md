@@ -1,3 +1,3 @@
 # chipscanlib-swift
 
-A description of this package.
+Basic implementation of the Chipscanlib in Swift for iOS. 
