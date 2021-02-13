@@ -1,6 +1,5 @@
 pipeline {
     agent {label 'ios'}
-    tools none
     stages {
         stage ('Initialize') {
             steps {
