@@ -3,7 +3,6 @@ pipeline {
     stages {
         stage ('Initialize') {
             steps {
-				sh 'xcode-select --install'
                 sh 'bundle install --path=./vendor/bundle'
             }
         }
