@@ -1,5 +1,8 @@
 pipeline {
     agent {label 'ios'}
+	environment {
+		PATH = "/usr/local/bin:$HOME/.rbenv/bin:$PATH"
+	}
     stages {
         stage ('Initialize') {
             steps {
