@@ -22,19 +22,16 @@ public class VivoAPI {
         // Pulls a challenge from the API synchronously, returns it as a byte string
         // Generate the params
         var resp: String = ""
-        var finished = false
         AF.request(postGetChall, method: .post, parameters: VivoChallenge(apiKey: apikey), encoder: JSONParameterEncoder.default).responseDecodable (of: VivoChallengeResponse.self) { response in
             print(response)
             guard let jsonResp = response.value else {
                 resp = "error"
-                finished = true
                 completion(resp)
                 return
                 
             }
             resp = jsonResp.chall
             completion(resp)
-            finished = true
             
         }
 
@@ -45,24 +42,34 @@ public class VivoAPI {
     
     
     
-    public func getPcdResp(pcd: VivoPCD) -> String {
+    public func getPcdResp(pcd: VivoPCD, completion: @escaping (String) -> Void) -> Void {
         // Pull the PCD Response from the API, return as a byte string
         var resp: String = ""
         AF.request(postPcdChall, method: .post, parameters: pcd, encoder: JSONParameterEncoder.default).responseDecodable(of: VivoPCDResp.self) { response in
-            guard let jsonResp = response.value else { return }
+            guard let jsonResp = response.value else {
+                completion(resp)
+                return
+                
+            }
             resp = jsonResp.resp
+            completion(resp)
         }
-        return resp
+        
     }
     
-    public func checkResp(vivoResp: VivoResponse) -> VivoResponseReturn {
+    public func checkResp(vivoResp: VivoResponse, completion: @escaping (VivoResponseReturn?) -> Void) -> Void {
         // Pull the responses
         var resp: VivoResponseReturn?
         AF.request(postCheckResp, method: .post, parameters: vivoResp, encoder: JSONParameterEncoder.default).responseDecodable(of: VivoResponseReturn.self) { response in
-            guard let jsonResp = response.value else { return }
+            guard let jsonResp = response.value else {
+                completion(resp)
+                return
+                
+            }
             resp = jsonResp
+            completion(resp)
         }
-        return resp!
+        
     }
     
     

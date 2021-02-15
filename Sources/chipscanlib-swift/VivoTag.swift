@@ -195,7 +195,7 @@ public class VivoTag {
         }
     }
     
-    static func dataWithHexString(hex: String) -> Data {
+    public static func dataWithHexString(hex: String) -> Data {
         var hex = hex
         var data = Data()
         while(hex.count > 0) {

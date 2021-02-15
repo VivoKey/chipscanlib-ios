@@ -46,8 +46,8 @@ public class VivoAuthenticator {
         }
         
     }
-    /// Processes an implant synchronously. Causes RF.
-    public func run() {
+    /// Processes an implant asynchronously. Causes RF.
+    public func run(completion: @escaping (VivoAuthResult) -> Void) {
         // Check our challenge hasn't expired/exists
         if(CFAbsoluteTimeGetCurrent() - challts > 25 || challenge == "") {
             // It's greater than 25, give ourselves time to do stuff and grab a new one
@@ -58,18 +58,27 @@ public class VivoAuthenticator {
             // Run a single sign
             let resp = tag!.singleSign(challenge: challenge)
             // Build an auth result - basically chain builds to create a checkResp and so on
-            authResult = VivoAuthResult(resp: api.checkResp(vivoResp: VivoResponse(piccChall: challenge, piccResp: resp, piccUid: tag!.getUid())))
-            return
+            api.checkResp(vivoResp: VivoResponse(piccChall: challenge, piccResp: resp, piccUid: tag!.getUid())) {response in
+                self.authResult = VivoAuthResult(resp: response!)
+                completion(self.authResult!)
+            }
+
         }
         if (tagtype == VivoTag.SPARK_2) {
             // Either or, the Tag abstracts Apex/Spark 2 because Apple probes for us
             // Nab the UID
             let chipUid = tag!.getUid()
             let pcdChall = tag!.authPart1()
-            let pcdResp = api.getPcdResp(pcd: VivoPCD(ChipUid: chipUid, piccChallenge: challenge, PcdChallenge: pcdChall))
-            let piccResp = tag!.authPart2(pcdResp: pcdResp)
-            authResult = VivoAuthResult(resp: api.checkResp(vivoResp: VivoResponse(piccChall: challenge, piccResp: piccResp, piccUid: chipUid)))
-            return
+            
+            var pcdResp:String = ""
+            api.getPcdResp(pcd: VivoPCD(ChipUid: chipUid, piccChallenge: challenge, PcdChallenge: pcdChall)) {response in
+                pcdResp = response
+                let piccResp = self.tag!.authPart2(pcdResp: pcdResp)
+                self.api.checkResp(vivoResp: VivoResponse(piccChall: self.challenge, piccResp: piccResp, piccUid: chipUid)) {response2 in
+                    self.authResult = VivoAuthResult(resp: response2!)
+                    completion(self.authResult!)
+                }
+            }
         }
         
         
