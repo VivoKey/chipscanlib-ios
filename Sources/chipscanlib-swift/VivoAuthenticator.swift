@@ -7,7 +7,7 @@
 
 import Foundation
 
-class VivoAuthenticator {
+public class VivoAuthenticator {
     /// Authenticator class, pass it a tag and it'll do the rest.
     
     var tag: VivoTag?
@@ -25,25 +25,25 @@ class VivoAuthenticator {
     let ERROR_TAGERR = 4
     
     
-    init(apikey: String) {
+    public init(apikey: String) {
         api = VivoAPI(apiKey: apikey)
         
     }
     
     /// Set the VivoTag to the received Tag
-    func setTag(receivedTag: VivoTag) {
+    public func setTag(receivedTag: VivoTag) {
         tag = receivedTag
         tagtype = tag!.type
     }
     
     /// Get a challenge synchronously
-    func getChallenge() {
+    public func getChallenge() {
         // Gets a challenge manually
         challenge = api.getChallenge()
         challts = CFAbsoluteTimeGetCurrent()
     }
     /// Processes an implant synchronously. Causes RF.
-    func run() {
+    public func run() {
         // Check our challenge hasn't expired/exists
         if(CFAbsoluteTimeGetCurrent() - challts > 25 || challenge == "") {
             // It's greater than 25, give ourselves time to do stuff and grab a new one
@@ -71,7 +71,7 @@ class VivoAuthenticator {
         
     }
     
-    func getAuth() -> VivoAuthResult {
+    public func getAuth() -> VivoAuthResult {
         return authResult!
     }
 }
