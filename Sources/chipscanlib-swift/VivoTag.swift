@@ -20,10 +20,10 @@ public class VivoTag {
     var auth15: Data?
     var subtype: Int?
     
-    static let SPARK_1 = 15
-    static let SPARK_2 = 14
-    static let NTAG4XX = 1
-    static let APEX = 2
+    public static let SPARK_1 = 15
+    public static let SPARK_2 = 14
+    public static let NTAG4XX = 1
+    public static let APEX = 2
     // We have two constructors to build a ISO15693 or ISO14443 VivoTag, respectively
     public init(tag: NFCISO7816Tag, sub: Int) {
         isotag = tag
