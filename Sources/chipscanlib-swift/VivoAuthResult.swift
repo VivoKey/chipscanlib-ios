@@ -7,14 +7,14 @@
 
 import Foundation
 
-class VivoAuthResult {
+public class VivoAuthResult {
     var chipid: String = ""
     var memberid: String = ""
     var membertype: String = ""
     var challenge: String = ""
     
     /// Processes the authentication response received from the API
-    init(resp: VivoResponseReturn) {
+    public init(resp: VivoResponseReturn) {
         if(resp.memberType == "member-id") {
             memberid = resp.resultData
             membertype = "member"
