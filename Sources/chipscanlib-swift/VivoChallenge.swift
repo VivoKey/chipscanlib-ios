@@ -11,10 +11,12 @@ import Foundation
 public struct VivoChallenge: Encodable {
     // A structure to handle requesting a challenge from the VivoKey API
     let apikey: String
-    init(ApiKey api: String) {
+    init(apiKey api: String) {
         apikey = api
     }
-    
+    enum CodingKeys: String, CodingKey {
+            case apikey = "api-key"
+        }
 }
 
 public struct VivoChallengeResponse: Decodable {

@@ -36,11 +36,15 @@ public class VivoAuthenticator {
         tagtype = tag!.type
     }
     
-    /// Get a challenge synchronously
+    /// Get a challenge asynchronously
     public func getChallenge() {
         // Gets a challenge manually
-        challenge = api.getChallenge()
-        challts = CFAbsoluteTimeGetCurrent()
+        api.getChallenge() {response in
+            // Once finalised, we set the challenge
+            self.challenge = response
+            self.challts = CFAbsoluteTimeGetCurrent()
+        }
+        
     }
     /// Processes an implant synchronously. Causes RF.
     public func run() {

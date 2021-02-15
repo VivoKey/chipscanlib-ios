@@ -8,6 +8,7 @@ final class chipscanlib_swiftTests: XCTestCase {
         // results.
         XCTAssertEqual(chipscanlib_swift().text, "Hello, World!")
     }
+    
 
     static var allTests = [
         ("testExample", testExample),

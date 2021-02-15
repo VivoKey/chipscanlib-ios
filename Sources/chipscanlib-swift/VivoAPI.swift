@@ -18,18 +18,31 @@ public class VivoAPI {
         apikey = api
     }
     
-    public func getChallenge() -> String {
+    public func getChallenge(completion: @escaping (String) -> Void) -> Void {
         // Pulls a challenge from the API synchronously, returns it as a byte string
         // Generate the params
         var resp: String = ""
-        AF.request(postGetChall, method: .post, parameters: VivoChallenge(ApiKey: apikey), encoder: JSONParameterEncoder.default).responseDecodable (of: VivoChallengeResponse.self) { response in
-            guard let jsonResp = response.value else { return }
+        var finished = false
+        AF.request(postGetChall, method: .post, parameters: VivoChallenge(apiKey: apikey), encoder: JSONParameterEncoder.default).responseDecodable (of: VivoChallengeResponse.self) { response in
+            print(response)
+            guard let jsonResp = response.value else {
+                resp = "error"
+                finished = true
+                completion(resp)
+                return
+                
+            }
             resp = jsonResp.chall
-            
+            completion(resp)
+            finished = true
             
         }
-        return resp
+
+
+        
     }
+    
+    
     
     
     public func getPcdResp(pcd: VivoPCD) -> String {
