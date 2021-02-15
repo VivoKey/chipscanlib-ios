@@ -18,6 +18,12 @@ public struct VivoPCD: Encodable {
         pcdchall = pcdchallenge
     }
     
+    enum CodingKeys: String, CodingKey {
+        case uid = "picc-uid"
+        case piccchall = "picc-challenge"
+        case pcdchall = "pcd-challenge"
+    }
+    
 }
 
 public struct VivoPCDResp: Decodable {

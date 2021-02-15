@@ -56,6 +56,39 @@ final class apiTest: XCTestCase {
         
     }
     
+    func testShouldValidatePCD() {
+        // Test the PCD implementation for Spark 2
+        // Grab a challenge
+        let vivoApi = VivoAPI(apiKey: "005add4870eca84aab06e4f5f41c3736eb4f11558e670f11886a91dea472")
+        var resp: String = ""
+        let expectation = self.expectation(description: "API response")
+        vivoApi.getChallenge() { response in
+            resp = response
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+        XCTAssertNotEqual(resp, "")
+        XCTAssertNotEqual(resp, "error")
+        // Generate a PCD challenge
+        var bytes = [UInt8](repeating: 0, count: 16)
+        SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes)
+        let rng = Data(bytes)
+        // Build the encryptor, CBC mode with 0 IV
+        let aesEnc = try! AES(key: VivoTag.dataWithHexString(hex: "9452494e951661cfb7f6f98ca2ad3585").bytes, blockMode: CBC(iv: VivoTag.dataWithHexString(hex: "00000000000000000000000000000000").bytes), padding: .noPadding)
+        // Actually encrypt
+        let cryptedData = try! aesEnc.encrypt(rng.bytes).toHexString()
+        let expectation2 = self.expectation(description: "Check PCD")
+        // Get a PCD response from server
+        var resp2: String = ""
+        vivoApi.getPcdResp(pcd: VivoPCD(ChipUid: "abddfeb16a7975cb", piccChallenge: resp, PcdChallenge: cryptedData)) {response in
+            resp2 = response
+            expectation2.fulfill()
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+        // As long as it's not null, honestly, don't see the issue
+        XCTAssertNotEqual(resp2, "")
+    }
+    
     
 
     static var allTests = [
