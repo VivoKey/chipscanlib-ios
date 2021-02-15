@@ -13,12 +13,12 @@ public class VivoAPI {
     let postGetChall = "https://api2.vivokey.com/v1/get-challenge"
     let postPcdChall = "https://api2.vivokey.com/v1/pcd-challenge"
     let postCheckResp = "https://api2.vivokey.com/v1/check-response"
-    init(apiKey api: String) {
+    public init(apiKey api: String) {
         // Initialises the API object with an API key
         apikey = api
     }
     
-    func getChallenge() -> String {
+    public func getChallenge() -> String {
         // Pulls a challenge from the API synchronously, returns it as a byte string
         // Generate the params
         var resp: String = ""
@@ -32,7 +32,7 @@ public class VivoAPI {
     }
     
     
-    func getPcdResp(pcd: VivoPCD) -> String {
+    public func getPcdResp(pcd: VivoPCD) -> String {
         // Pull the PCD Response from the API, return as a byte string
         var resp: String = ""
         AF.request(postPcdChall, method: .post, parameters: pcd, encoder: JSONParameterEncoder.default).responseDecodable(of: VivoPCDResp.self) { response in
@@ -42,7 +42,7 @@ public class VivoAPI {
         return resp
     }
     
-    func checkResp(vivoResp: VivoResponse) -> VivoResponseReturn {
+    public func checkResp(vivoResp: VivoResponse) -> VivoResponseReturn {
         // Pull the responses
         var resp: VivoResponseReturn?
         AF.request(postCheckResp, method: .post, parameters: vivoResp, encoder: JSONParameterEncoder.default).responseDecodable(of: VivoResponseReturn.self) { response in
