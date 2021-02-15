@@ -9,7 +9,7 @@ import Foundation
 import CoreNFC
 
 @available(iOS 14.0, *)
-class VivoTag {
+public class VivoTag {
     var isotag: NFCISO7816Tag?
     var tag15: NFCISO15693Tag?
     var type: Int
@@ -25,7 +25,7 @@ class VivoTag {
     static let NTAG4XX = 1
     static let APEX = 2
     // We have two constructors to build a ISO15693 or ISO14443 VivoTag, respectively
-    init(tag: NFCISO7816Tag, sub: Int) {
+    public init(tag: NFCISO7816Tag, sub: Int) {
         isotag = tag
         type = 14
         subtype = sub
@@ -43,14 +43,14 @@ class VivoTag {
         
     }
     @available(iOS 14.0, *)
-    init(tag: NFCISO15693Tag) {
+    public init(tag: NFCISO15693Tag) {
         tag15 = tag
         type = VivoTag.SPARK_1
         flags15 = NFCISO15693RequestFlag.address
         auth15 = Data.init([0x00, 0x02])
         
     }
-    func getUid() -> String {
+    public func getUid() -> String {
         if (type == VivoTag.SPARK_1) {
             // 15693
             // Reverse the UID and return
@@ -78,7 +78,7 @@ class VivoTag {
             return ""
         }
     }
-    func singleSign(challenge: String) -> String {
+    public func singleSign(challenge: String) -> String {
         // Runs a single sign against a type 15 chip
         if (type != VivoTag.SPARK_1) {
             return ""
@@ -106,7 +106,7 @@ class VivoTag {
         
     }
     
-    func authPart1() -> String {
+    public func authPart1() -> String {
         // Gets a PCD challenge from a type 14 chip
         if(type != VivoTag.SPARK_2) {
             return ""
@@ -143,7 +143,7 @@ class VivoTag {
         
     }
     
-    func authPart2(pcdResp: String) -> String {
+    public func authPart2(pcdResp: String) -> String {
         if(type != VivoTag.SPARK_2) {
             return ""
         }
