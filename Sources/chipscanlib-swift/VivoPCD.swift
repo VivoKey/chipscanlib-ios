@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct VivoPCD: Encodable {
+public struct VivoPCD: Encodable {
     // Structure to handle a get-pcdresponse request as JSON
     let uid: String
     let piccchall: String
@@ -20,7 +20,7 @@ struct VivoPCD: Encodable {
     
 }
 
-struct VivoPCDResp: Decodable {
+public struct VivoPCDResp: Decodable {
     // A structure to handle a PCDResponse from the VivoKey API for JSON
     let resp: String
     

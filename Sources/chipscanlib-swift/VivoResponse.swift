@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct VivoResponse: Encodable {
+public struct VivoResponse: Encodable {
     // Represents a JSON object to send to the check-result API
     let piccChall: String
     let piccResp: String
@@ -20,7 +20,7 @@ struct VivoResponse: Encodable {
     }
 }
 
-struct VivoResponseReturn: Decodable {
+public struct VivoResponseReturn: Decodable {
     var memberType: String
     var resultData: String
 

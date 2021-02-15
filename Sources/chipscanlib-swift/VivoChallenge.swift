@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct VivoChallenge: Encodable {
+public struct VivoChallenge: Encodable {
     // A structure to handle requesting a challenge from the VivoKey API
     let apikey: String
     init(ApiKey api: String) {
@@ -17,7 +17,7 @@ struct VivoChallenge: Encodable {
     
 }
 
-struct VivoChallengeResponse: Decodable {
+public struct VivoChallengeResponse: Decodable {
     // A structure to handle a challenge from the VivoKey API for JSON
     let chall: String
     let timeout: Int
