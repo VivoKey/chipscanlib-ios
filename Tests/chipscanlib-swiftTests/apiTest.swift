@@ -94,6 +94,7 @@ final class apiTest: XCTestCase {
     static var allTests = [
         ("shouldGetChallenge", testShouldGetChallenge),
         ("shouldCheckResponse", testShouldCheckResponse),
+        ("shouldValidatePCD", testShouldValidatePCD),
         
     ]
 }

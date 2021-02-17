@@ -13,6 +13,7 @@ public class VivoTag {
     var isotag: NFCISO7816Tag?
     var tag15: NFCISO15693Tag?
     var type: Int
+    var uid: String?
     var part1APDU: NFCISO7816APDU?
     var part2APDU: NFCISO7816APDU?
     var selAPDU: NFCISO7816APDU?
@@ -32,6 +33,7 @@ public class VivoTag {
         if(subtype == VivoTag.NTAG4XX) {
             // NDEF
             part1APDU = NFCISO7816APDU(instructionClass: 0x90, instructionCode: 0x71, p1Parameter: 0x00, p2Parameter: 0x00, data: Data([0x00, 0x00]), expectedResponseLength: 0)
+            uid = tag.identifier.hexEncodedString()
             
         } else {
             // Apex
@@ -39,6 +41,15 @@ public class VivoTag {
             part1APDU = NFCISO7816APDU(instructionClass: 0x00, instructionCode: 0xA9, p1Parameter: 0xA3, p2Parameter: 0x00, data: Data(), expectedResponseLength: 0)
             selAPDU = NFCISO7816APDU(instructionClass: 0x00, instructionCode: 0xA4, p1Parameter: 0x04, p2Parameter: 0x00, data: Data([0xA0, 0x00, 0x00, 0x07, 0x47, 0x00, 0xCC, 0x68, 0xE8, 0x8C, 0x01]), expectedResponseLength: 0)
             
+            isotag!.sendCommand(apdu: selAPDU!) {data, sw1, sw2, error in
+                if(nil != error || sw1 != 0x90 || sw2 != 0x00) {
+                    // Error received
+                    self.uid = ""
+                    return
+                }
+                // No error
+                self.uid = data.hexEncodedString()
+            }
         }
         
     }
@@ -48,68 +59,39 @@ public class VivoTag {
         type = VivoTag.SPARK_1
         flags15 = NFCISO15693RequestFlag.address
         auth15 = Data.init([0x00, 0x02])
+        uid = Data(tag15!.identifier.reversed()).hexEncodedString()
         
     }
     public func getUid() -> String {
-        if (type == VivoTag.SPARK_1) {
-            // 15693
-            // Reverse the UID and return
-            return Data(tag15!.identifier.reversed()).hexEncodedString()
-        } else if (type == VivoTag.SPARK_2 && subtype == VivoTag.NTAG4XX) {
-            // NDEF
-            return isotag!.identifier.hexEncodedString()
-        } else if (type == VivoTag.SPARK_2 && subtype == VivoTag.APEX) {
-            // Apex
-            var respStr: String = ""
-            isotag!.sendCommand(apdu: selAPDU!) {data, sw1, sw2, error in
-                if(nil != error || sw1 != 0x91 || sw2 != 0xAF) {
-                    // Error received
-                    respStr = ""
-                    return
-                }
-                // No error
-                respStr = data.hexEncodedString()
-            }
-            return respStr
-            
-        }
-        else {
-            // Not supported
-            return ""
-        }
+        return uid!
     }
-    public func singleSign(challenge: String) -> String {
+    public func singleSign(challenge: String, completion: @escaping (String) -> Void) -> Void {
         // Runs a single sign against a type 15 chip
         if (type != VivoTag.SPARK_1) {
-            return ""
+            completion("")
         }
-        var respFlag: NFCISO15693ResponseFlag?
-        var respData: Data?
         // Apple makes this stuff pretty simple, to be honest
         // Use addressed mode
         tag15!.authenticate(requestFlags: flags15!, cryptoSuiteIdentifier: 0, message: auth15!) {response in
             let resp = try! response.get()
-            respFlag = resp.0
-            respData = resp.1
+            let respFlag = resp.0
+            var respData = resp.1
+            if (respFlag.contains(NFCISO15693ResponseFlag.error)) {
+                // Got an error flag on the response
+                completion("")
+            } else {
+                respData.removeFirst()
+                let respStr = respData.hexEncodedString()
+                completion(respStr)
+            }
         }
-        if (respFlag!.contains(NFCISO15693ResponseFlag.error)) {
-            // Got an error flag on the response
-            return ""
-        }
-        // Success, decode that data array
-        // Pop the first off, as it's a Barker flag
-        respData!.removeFirst()
-        let respStr = respData!.hexEncodedString()
-        return respStr
-        
-        
         
     }
     
-    public func authPart1() -> String {
+    public func authPart1(completion: @escaping (String) -> Void) -> Void {
         // Gets a PCD challenge from a type 14 chip
         if(type != VivoTag.SPARK_2) {
-            return ""
+            completion("")
         }
         var respStr: String = ""
         if(subtype == VivoTag.NTAG4XX) {
@@ -119,12 +101,14 @@ public class VivoTag {
                 if(nil != error || sw1 != 0x91 || sw2 != 0xAF) {
                     // Error received
                     respStr = ""
+                    completion(respStr)
                     return
                 }
                 // No error
                 respStr = data.hexEncodedString()
+                completion(respStr)
             }
-            return respStr
+            
         } else {
             // Apex
             // Do as above, i guess
@@ -132,20 +116,21 @@ public class VivoTag {
                 if(nil != error || sw1 != 0x90 || sw2 != 0x00) {
                     // Error received
                     respStr = ""
+                    completion(respStr)
                     return
                 }
                 // No error
                 respStr = data.hexEncodedString()
+                completion(respStr)
             }
-            return respStr
             
         }
         
     }
     
-    public func authPart2(pcdResp: String) -> String {
+    public func authPart2(pcdResp: String, completion: @escaping (String) -> Void) -> Void {
         if(type != VivoTag.SPARK_2) {
-            return ""
+            completion("")
         }
         var respStr: String = ""
         if(subtype == VivoTag.NTAG4XX) {
@@ -156,12 +141,13 @@ public class VivoTag {
                 if(nil != error || sw1 != 0x91 || sw2 != 0x00) {
                     // Error received
                     respStr = ""
+                    completion(respStr)
                     return
                 }
                 // No error
                 respStr = data.hexEncodedString()
+                completion(respStr)
             }
-            return respStr
         } else {
             // Apex
             // Composite response, decompose it
@@ -175,23 +161,25 @@ public class VivoTag {
                 if(nil != error || sw1 != 0x90 || sw2 != 0x00) {
                     // Error received
                     respStr = ""
+                    completion(respStr)
                     return
                 }
-                // No error
                 
-            }
-            // Now send the validator
-            isotag!.sendCommand(apdu: part2APDU!) {data, sw1, sw2, error in
-                if(nil != error || sw1 != 0x90 || sw2 != 0x00) {
-                    // Error received
-                    respStr = ""
-                    return
-                }
                 // No error
-                respStr = data.hexEncodedString()
+                // Now send the validator
+                self.isotag!.sendCommand(apdu: self.part2APDU!) {data, sw1, sw2, error in
+                    if(nil != error || sw1 != 0x90 || sw2 != 0x00) {
+                        // Error received
+                        respStr = ""
+                        completion(respStr)
+                        return
+                    }
+                    // No error
+                    respStr = data.hexEncodedString()
+                    completion(respStr)
+                }
             }
-            return respStr
-            
+
         }
     }
     
