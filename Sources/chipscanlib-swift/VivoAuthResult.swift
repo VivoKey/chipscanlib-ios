@@ -14,7 +14,8 @@ public class VivoAuthResult {
     var challenge: String = ""
     
     /// Processes the authentication response received from the API
-    public init(resp: VivoResponseReturn) {
+    public init(resp: VivoResponseReturn, chall: String) {
+        challenge = chall
         if(resp.memberType == "member-id") {
             memberid = resp.resultData
             membertype = "member"
