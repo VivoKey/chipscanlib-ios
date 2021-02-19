@@ -8,9 +8,9 @@
 import Foundation
 
 public class VivoAuthResult {
-    var chipid: String = ""
-    var memberid: String = ""
-    var membertype: String = ""
+    public var chipid: String = ""
+    public var memberid: String = ""
+    public var membertype: String = ""
     var challenge: String = ""
     
     /// Processes the authentication response received from the API
