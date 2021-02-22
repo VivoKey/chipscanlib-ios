@@ -138,7 +138,7 @@ public class VivoTag {
         var respStr: String = ""
         if(subtype == VivoTag.NTAG4XX) {
             // NTAG
-            part2APDU = NFCISO7816APDU(instructionClass: 0x90, instructionCode: 0xAF, p1Parameter: 000, p2Parameter: 0x00, data: Data(0x20, VivoTag.dataWithHexString(hex: pcdResp)), expectedResponseLength: 255)
+            part2APDU = NFCISO7816APDU(instructionClass: 0x90, instructionCode: 0xAF, p1Parameter: 000, p2Parameter: 0x00, data: VivoTag.dataWithHexString(hex: "20"+pcdResp), expectedResponseLength: 255)
             // Actually send
             isotag!.sendCommand(apdu: part2APDU!) {data, sw1, sw2, error in
                 if(nil != error || sw1 != 0x91 || sw2 != 0x00) {
