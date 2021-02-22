@@ -7,7 +7,7 @@
 
 import XCTest
 import CryptoSwift
-@testable import chipscanlib_swift
+@testable import ChipscanlibSwift
 
 final class apiTest: XCTestCase {
     func testShouldGetChallenge() {
@@ -51,11 +51,10 @@ final class apiTest: XCTestCase {
             expectation2.fulfill()
         }
         waitForExpectations(timeout: 5, handler: nil)
-        XCTAssertEqual(resp2!.memberid,  "75e95abb37ee6e413ce5431f3785023312093c7fb62deb77dbe4c34a3a108227ae28e61998029c3edbc6393f84e0422315dc4c87e10fe31db4a435790f051579")
+        XCTAssertEqual(resp2!.memberId,  "75e95abb37ee6e413ce5431f3785023312093c7fb62deb77dbe4c34a3a108227ae28e61998029c3edbc6393f84e0422315dc4c87e10fe31db4a435790f051579")
         
         
     }
-    
     
     func testShouldSetKV() {
         // Get and test a very basic Spark 1 emulation
@@ -84,7 +83,7 @@ final class apiTest: XCTestCase {
             expectation2.fulfill()
         }
         waitForExpectations(timeout: 5, handler: nil)
-        XCTAssertEqual(resp2!.memberid,  "75e95abb37ee6e413ce5431f3785023312093c7fb62deb77dbe4c34a3a108227ae28e61998029c3edbc6393f84e0422315dc4c87e10fe31db4a435790f051579")
+        XCTAssertEqual(resp2!.memberId,  "75e95abb37ee6e413ce5431f3785023312093c7fb62deb77dbe4c34a3a108227ae28e61998029c3edbc6393f84e0422315dc4c87e10fe31db4a435790f051579")
         // With a valid challenge, we now need to run the setKV
         resp2!.setChall(chall: resp)
         let kvapi = VivoKVAPI(authres: resp2!)
@@ -139,7 +138,7 @@ final class apiTest: XCTestCase {
             expectation2.fulfill()
         }
         waitForExpectations(timeout: 5, handler: nil)
-        XCTAssertEqual(resp2!.memberid,  "75e95abb37ee6e413ce5431f3785023312093c7fb62deb77dbe4c34a3a108227ae28e61998029c3edbc6393f84e0422315dc4c87e10fe31db4a435790f051579")
+        XCTAssertEqual(resp2!.memberId,  "75e95abb37ee6e413ce5431f3785023312093c7fb62deb77dbe4c34a3a108227ae28e61998029c3edbc6393f84e0422315dc4c87e10fe31db4a435790f051579")
         // With a valid challenge, we now need to run the setKV
         resp2!.setChall(chall: resp)
         let kvapi = VivoKVAPI(authres: resp2!)
@@ -182,7 +181,9 @@ final class apiTest: XCTestCase {
 
     static var allTests = [
         ("shouldGetChallenge", testShouldGetChallenge),
-        ("shouldCheckResponse", testShouldCheckResponse)
+        ("shouldCheckResponse", testShouldCheckResponse),
+        ("shouldSetKV", testShouldSetKV),
+        ("shouldGetKV", testShouldGetKV)
         
     ]
 }

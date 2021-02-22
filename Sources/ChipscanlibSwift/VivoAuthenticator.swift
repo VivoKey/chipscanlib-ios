@@ -51,21 +51,17 @@ public class VivoAuthenticator {
         // Check our challenge hasn't expired/exists
         if(challts.distance(to: CFAbsoluteTimeGetCurrent()) > 25.00 || challenge == "") {
             let semaphore = DispatchSemaphore(value: 1)
-            print("Waiting for challenge renewal")
             // It's greater than 25, give ourselves time to do stuff and grab a new one
             DispatchQueue.global().async {
                 // Run our challenge, use a semaphore to signal it as completed
                 self.api.getChallenge() { response in
                     self.challenge = response
                     self.challts = CFAbsoluteTimeGetCurrent()
-                    print("Challenge renewed")
                     semaphore.signal()
                 }
             }
             // Semaphore means we wait here until the DispatchQueue finishes
-            print("Waiting at semaphore")
             semaphore.wait()
-            print("Finished waiting at semaphore")
         }
         if (tagtype == VivoTag.SPARK_1) {
             // Spark 1
@@ -76,7 +72,6 @@ public class VivoAuthenticator {
                 resp = response
                 // Build an auth result - basically chain builds to create a checkResp and so on
                 self.api.checkResp(vivoResp: VivoResponse(piccChall: self.challenge, piccResp: resp, piccUid: self.tag!.getUid())) {response2 in
-                    print("API resp: ", response2)
                     self.authResult = response2!
                     completion(self.authResult!)
                 }
@@ -92,7 +87,7 @@ public class VivoAuthenticator {
                 pcdChall = response
                 print("PCD Chall: ", pcdChall)
                 var pcdResp:String = ""
-                self.api.getPcdResp(pcd: VivoPCD(chipuid: chipUid, piccchallenge: self.challenge, pcdchallenge: pcdChall)) {response2 in
+                self.api.getPcdResp(pcd: VivoPCD(chipUid: chipUid, piccChallenge: self.challenge, pcdChallenge: pcdChall)) {response2 in
                     pcdResp = response2
                     
                     self.tag!.authPart2(pcdResp: pcdResp) {piccResp in

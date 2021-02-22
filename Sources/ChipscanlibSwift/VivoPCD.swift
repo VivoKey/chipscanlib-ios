@@ -10,18 +10,18 @@ import Foundation
 public struct VivoPCD: Encodable {
     // Structure to handle a get-pcdresponse request as JSON
     let uid: String
-    let piccchall: String
-    let pcdchall: String
-    init(chipuid: String, piccchallenge: String, pcdchallenge: String) {
-        uid = chipuid
-        piccchall = piccchallenge
-        pcdchall = pcdchallenge
+    let piccChall: String
+    let pcdChall: String
+    init(chipUid: String, piccChallenge: String, pcdChallenge: String) {
+        uid = chipUid
+        piccChall = piccChallenge
+        pcdChall = pcdChallenge
     }
     
     enum CodingKeys: String, CodingKey {
         case uid = "picc-uid"
-        case piccchall = "picc-challenge"
-        case pcdchall = "pcd-challenge"
+        case piccChall = "picc-challenge"
+        case pcdChall = "pcd-challenge"
     }
     
 }
