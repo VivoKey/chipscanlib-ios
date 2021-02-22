@@ -33,7 +33,7 @@ public class VivoTag {
         if(subtype == VivoTag.NTAG4XX) {
             // NDEF
             part1APDU = NFCISO7816APDU(instructionClass: 0x90, instructionCode: 0x71, p1Parameter: 0x00, p2Parameter: 0x00, data: Data([0x02, 0x00]), expectedResponseLength: 256)
-            uid = tag.identifier.hexEncodedString()
+            uid = Data(tag.identifier.reversed()).hexEncodedString()
             print("Tag ID: ", uid)
             
         } else {

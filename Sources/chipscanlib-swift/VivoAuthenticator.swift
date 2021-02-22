@@ -89,7 +89,7 @@ public class VivoAuthenticator {
                 var pcdResp:String = ""
                 self.api.getPcdResp(pcd: VivoPCD(ChipUid: chipUid, piccChallenge: self.challenge, PcdChallenge: pcdChall)) {response2 in
                     pcdResp = response2
-                    print("PCD response: ", pcdResp)
+                    
                     self.tag!.authPart2(pcdResp: pcdResp) {piccResp in
                         print("PICC response: ", piccResp)
                         self.api.checkResp(vivoResp: VivoResponse(piccChall: self.challenge, piccResp: piccResp, piccUid: chipUid)) {response3 in
