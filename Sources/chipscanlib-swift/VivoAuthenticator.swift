@@ -74,9 +74,9 @@ public class VivoAuthenticator {
             tag!.singleSign(challenge: challenge) {response in
                 // grab Resp
                 resp = response
-                print("response:", resp)
                 // Build an auth result - basically chain builds to create a checkResp and so on
                 self.api.checkResp(vivoResp: VivoResponse(piccChall: self.challenge, piccResp: resp, piccUid: self.tag!.getUid())) {response2 in
+                    print("API resp: ", response2)
                     self.authResult = VivoAuthResult(resp: response2!, chall: self.challenge)
                     completion(self.authResult!)
                 }
