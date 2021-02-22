@@ -14,7 +14,7 @@ public class VivoKVAPI {
     var postGet: VivoKVGet?
     let postGetKV = "https://api2.vivokey.com/v1/kvp-read"
     let postSetKV = "https://api2.vivokey.com/v1/kvp-store"
-    init(authres: VivoAuthResult) {
+    public init(authres: VivoAuthResult) {
         challenge = authres.challenge
     }
     
