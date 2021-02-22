@@ -75,7 +75,7 @@ public class VivoTag {
         let auth15full = auth15!+challenge.substring(to: challenge.index(challenge.startIndex, offsetBy: 20))
         print(auth15full)
         // Use addressed mode
-        tag15!.authenticate(requestFlags: flags15!, cryptoSuiteIdentifier: 0, message: VivoTag.dataWithHexString(hex: auth15full)) {response in
+        tag15!.authenticate(requestFlags: [.address, .option, .highDataRate], cryptoSuiteIdentifier: 0, message: VivoTag.dataWithHexString(hex: auth15full)) {response in
             switch(response) {
             case .failure(let error):
                 print(error)
