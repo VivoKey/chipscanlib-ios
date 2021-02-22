@@ -73,6 +73,7 @@ public class VivoAuthenticator {
                 // Build an auth result - basically chain builds to create a checkResp and so on
                 self.api.checkResp(vivoResp: VivoResponse(piccChall: self.challenge, piccResp: resp, piccUid: self.tag!.getUid())) {response2 in
                     self.authResult = response2!
+                    self.authResult!.setChall(chall: self.challenge)
                     completion(self.authResult!)
                 }
             }
@@ -94,6 +95,7 @@ public class VivoAuthenticator {
                         print("PICC response: ", piccResp)
                         self.api.checkResp(vivoResp: VivoResponse(piccChall: self.challenge, piccResp: piccResp, piccUid: chipUid)) {response3 in
                             self.authResult = response3!
+                            self.authResult!.setChall(chall: self.challenge)
                             completion(self.authResult!)
                         }
                         
