@@ -18,7 +18,7 @@ public class VivoTag {
     var part2APDU: NFCISO7816APDU?
     var selAPDU: NFCISO7816APDU?
     var flags15: NFCISO15693RequestFlag?
-    var auth15: Data?
+    var auth15: String?
     var subtype: Int?
     
     public static let SPARK_1 = 15
@@ -59,7 +59,7 @@ public class VivoTag {
         tag15 = tag
         type = VivoTag.SPARK_1
         flags15 = NFCISO15693RequestFlag.address
-        auth15 = Data.init([0x00, 0x02])
+        auth15 = "0002"
         uid = Data(tag15!.identifier.reversed()).hexEncodedString()
         
     }
@@ -72,8 +72,9 @@ public class VivoTag {
             completion("")
         }
         // Apple makes this stuff pretty simple, to be honest
+        let auth15full = auth15!+challenge.substring(to: challenge.index(challenge.startIndex, offsetBy: 20))
         // Use addressed mode
-        tag15!.authenticate(requestFlags: flags15!, cryptoSuiteIdentifier: 0, message: auth15!) {response in
+        tag15!.authenticate(requestFlags: flags15!, cryptoSuiteIdentifier: 0, message: VivoTag.dataWithHexString(hex: auth15full)) {response in
             let resp = try! response.get()
             let respFlag = resp.0
             var respData = resp.1
