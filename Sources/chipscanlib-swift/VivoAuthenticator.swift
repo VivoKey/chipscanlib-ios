@@ -15,7 +15,7 @@ public class VivoAuthenticator {
     var tagtype: Int = 0
     var authResult: VivoAuthResult?
     var challenge: String = ""
-    var challts: Double = 0
+    var challts: CFAbsoluteTime = 0
     var isError: Bool = false
     var errorCode: Int = 0
     var errorString: String = ""
@@ -49,19 +49,23 @@ public class VivoAuthenticator {
     /// Processes an implant asynchronously. Causes RF.
     public func run(completion: @escaping (VivoAuthResult) -> Void) {
         // Check our challenge hasn't expired/exists
-        if(CFAbsoluteTimeGetCurrent() - challts > 25 || challenge == "") {
+        if(challts.distance(to: CFAbsoluteTimeGetCurrent()) > 25.00 || challenge == "") {
             let semaphore = DispatchSemaphore(value: 1)
+            print("Waiting for challenge renewal")
             // It's greater than 25, give ourselves time to do stuff and grab a new one
             DispatchQueue.global().async {
                 // Run our challenge, use a semaphore to signal it as completed
                 self.api.getChallenge() { response in
                     self.challenge = response
                     self.challts = CFAbsoluteTimeGetCurrent()
+                    print("Challenge renewed")
                     semaphore.signal()
                 }
             }
             // Semaphore means we wait here until the DispatchQueue finishes
+            print("Waiting at semaphore")
             semaphore.wait()
+            print("Finished waiting at semaphore")
         }
         if (tagtype == VivoTag.SPARK_1) {
             // Spark 1
