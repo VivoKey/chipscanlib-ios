@@ -52,6 +52,11 @@ public class VivoAPI {
                 return
                 
             }
+            if(jsonResp.resp == "Not enrolled UID.") {
+                print("PCD resp not enrolled uid")
+                completion("")
+                return
+            }
             resp = jsonResp.resp
             print("PCD resp success: ", resp)
             completion(resp)
