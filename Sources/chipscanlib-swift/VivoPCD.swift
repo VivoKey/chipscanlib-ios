@@ -12,7 +12,7 @@ public struct VivoPCD: Encodable {
     let uid: String
     let piccchall: String
     let pcdchall: String
-    init(ChipUid chipuid: String, piccChallenge piccchallenge: String, PcdChallenge pcdchallenge: String) {
+    init(chipuid: String, piccchallenge: String, pcdchallenge: String) {
         uid = chipuid
         piccchall = piccchallenge
         pcdchall = pcdchallenge

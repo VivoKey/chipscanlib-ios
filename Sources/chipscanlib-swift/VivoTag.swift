@@ -158,10 +158,12 @@ public class VivoTag {
                     respStr = ""
                     completion(respStr)
                     return
+                } else {
+                    // No error
+                    respStr = data.hexEncodedString()
+                    completion(respStr)
                 }
-                // No error
-                respStr = data.hexEncodedString()
-                completion(respStr)
+                
             }
         } else {
             // Apex

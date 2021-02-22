@@ -64,12 +64,13 @@ public class VivoAPI {
         
     }
     
-    public func checkResp(vivoResp: VivoResponse, completion: @escaping (VivoResponseReturn?) -> Void) -> Void {
+    public func checkResp(vivoResp: VivoResponse, completion: @escaping (VivoAuthResult?) -> Void) -> Void {
         // Pull the responses
-        var resp: VivoResponseReturn?
-        AF.request(postCheckResp, method: .post, parameters: vivoResp, encoder: JSONParameterEncoder.default).responseDecodable(of: VivoResponseReturn.self) { response in
+        var resp: VivoAuthResult?
+        AF.request(postCheckResp, method: .post, parameters: vivoResp, encoder: JSONParameterEncoder.default).responseDecodable(of: VivoAuthResult.self) { response in
             guard let jsonResp = response.value else {
-                completion(resp)
+                print("response error")
+                completion(nil)
                 return
                 
             }

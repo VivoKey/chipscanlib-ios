@@ -45,49 +45,17 @@ final class apiTest: XCTestCase {
         // Reverse and make string
         let cryptedRev: String = Data(cryptedData.reversed()).hexEncodedString()
         let expectation2 = self.expectation(description: "Check response")
-        var resp2: VivoResponseReturn?
+        var resp2: VivoAuthResult?
         vivoApi.checkResp(vivoResp: VivoResponse(piccChall: resp, piccResp: cryptedRev, piccUid: "1e037b01a46d4add")) {response in
             resp2 = response
             expectation2.fulfill()
         }
         waitForExpectations(timeout: 5, handler: nil)
-        XCTAssertEqual(resp2!.resultData,  "75e95abb37ee6e413ce5431f3785023312093c7fb62deb77dbe4c34a3a108227ae28e61998029c3edbc6393f84e0422315dc4c87e10fe31db4a435790f051579")
+        XCTAssertEqual(resp2!.memberid,  "75e95abb37ee6e413ce5431f3785023312093c7fb62deb77dbe4c34a3a108227ae28e61998029c3edbc6393f84e0422315dc4c87e10fe31db4a435790f051579")
         
         
     }
     
-    func testShouldValidatePCD() {
-        // Test the PCD implementation for Spark 2
-        // Grab a challenge
-        let vivoApi = VivoAPI(apiKey: "005add4870eca84aab06e4f5f41c3736eb4f11558e670f11886a91dea472")
-        var resp: String = ""
-        let expectation = self.expectation(description: "API response")
-        vivoApi.getChallenge() { response in
-            resp = response
-            expectation.fulfill()
-        }
-        waitForExpectations(timeout: 5, handler: nil)
-        XCTAssertNotEqual(resp, "")
-        XCTAssertNotEqual(resp, "error")
-        // Generate a PCD challenge
-        var bytes = [UInt8](repeating: 0, count: 16)
-        SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes)
-        let rng = Data(bytes)
-        // Build the encryptor, CBC mode with 0 IV
-        let aesEnc = try! AES(key: VivoTag.dataWithHexString(hex: "9452494e951661cfb7f6f98ca2ad3585").bytes, blockMode: CBC(iv: VivoTag.dataWithHexString(hex: "00000000000000000000000000000000").bytes), padding: .noPadding)
-        // Actually encrypt
-        let cryptedData = try! aesEnc.encrypt(rng.bytes).toHexString()
-        let expectation2 = self.expectation(description: "Check PCD")
-        // Get a PCD response from server
-        var resp2: String = ""
-        vivoApi.getPcdResp(pcd: VivoPCD(ChipUid: "abddfeb16a7975cb", piccChallenge: resp, PcdChallenge: cryptedData)) {response in
-            resp2 = response
-            expectation2.fulfill()
-        }
-        waitForExpectations(timeout: 5, handler: nil)
-        // As long as it's not null, honestly, don't see the issue
-        XCTAssertNotEqual(resp2, "")
-    }
     
     func testShouldSetKV() {
         // Get and test a very basic Spark 1 emulation
@@ -110,15 +78,16 @@ final class apiTest: XCTestCase {
         // Reverse and make string
         let cryptedRev: String = Data(cryptedData.reversed()).hexEncodedString()
         let expectation2 = self.expectation(description: "Check response")
-        var resp2: VivoResponseReturn?
+        var resp2: VivoAuthResult?
         vivoApi.checkResp(vivoResp: VivoResponse(piccChall: resp, piccResp: cryptedRev, piccUid: "1e037b01a46d4add")) {response in
             resp2 = response
             expectation2.fulfill()
         }
         waitForExpectations(timeout: 5, handler: nil)
-        XCTAssertEqual(resp2!.resultData,  "75e95abb37ee6e413ce5431f3785023312093c7fb62deb77dbe4c34a3a108227ae28e61998029c3edbc6393f84e0422315dc4c87e10fe31db4a435790f051579")
+        XCTAssertEqual(resp2!.memberid,  "75e95abb37ee6e413ce5431f3785023312093c7fb62deb77dbe4c34a3a108227ae28e61998029c3edbc6393f84e0422315dc4c87e10fe31db4a435790f051579")
         // With a valid challenge, we now need to run the setKV
-        let kvapi = VivoKVAPI(authres: VivoAuthResult(resp: resp2!, chall: resp))
+        resp2!.setChall(chall: resp)
+        let kvapi = VivoKVAPI(authres: resp2!)
         let kv = ["iosTest": "1234", "iosTest2": "5678"]
         kvapi.setKV(keyvals: kv)
         let expectation3 = self.expectation(description: "Set key-value pair")
@@ -164,15 +133,16 @@ final class apiTest: XCTestCase {
         // Reverse and make string
         let cryptedRev: String = Data(cryptedData.reversed()).hexEncodedString()
         let expectation2 = self.expectation(description: "Check response")
-        var resp2: VivoResponseReturn?
+        var resp2: VivoAuthResult?
         vivoApi.checkResp(vivoResp: VivoResponse(piccChall: resp, piccResp: cryptedRev, piccUid: "1e037b01a46d4add")) {response in
             resp2 = response
             expectation2.fulfill()
         }
         waitForExpectations(timeout: 5, handler: nil)
-        XCTAssertEqual(resp2!.resultData,  "75e95abb37ee6e413ce5431f3785023312093c7fb62deb77dbe4c34a3a108227ae28e61998029c3edbc6393f84e0422315dc4c87e10fe31db4a435790f051579")
+        XCTAssertEqual(resp2!.memberid,  "75e95abb37ee6e413ce5431f3785023312093c7fb62deb77dbe4c34a3a108227ae28e61998029c3edbc6393f84e0422315dc4c87e10fe31db4a435790f051579")
         // With a valid challenge, we now need to run the setKV
-        let kvapi = VivoKVAPI(authres: VivoAuthResult(resp: resp2!, chall: resp))
+        resp2!.setChall(chall: resp)
+        let kvapi = VivoKVAPI(authres: resp2!)
         let kv = ["iosTest": "1234", "iosTest2": "5678"]
         kvapi.setKV(keyvals: kv)
         let expectation3 = self.expectation(description: "Set key-value pair")
@@ -212,8 +182,7 @@ final class apiTest: XCTestCase {
 
     static var allTests = [
         ("shouldGetChallenge", testShouldGetChallenge),
-        ("shouldCheckResponse", testShouldCheckResponse),
-        ("shouldValidatePCD", testShouldValidatePCD),
+        ("shouldCheckResponse", testShouldCheckResponse)
         
     ]
 }

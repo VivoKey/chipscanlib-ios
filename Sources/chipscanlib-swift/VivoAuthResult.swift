@@ -7,26 +7,36 @@
 
 import Foundation
 
-public class VivoAuthResult {
+public class VivoAuthResult: Decodable {
     public var chipid: String = ""
     public var memberid: String = ""
     public var membertype: String = ""
     var challenge: String = ""
-    
-    /// Processes the authentication response received from the API
-    public init(resp: VivoResponseReturn, chall: String) {
-        challenge = chall
-        if(resp.memberType == "member-id") {
-            memberid = resp.resultData
-            membertype = "member"
-        } else if (resp.memberType == "chip-id") {
-            chipid = resp.resultData
-            membertype = "chip"
-        } else if (resp.memberType == "chip-member") {
-            let arr = try! JSONSerialization.jsonObject(with: VivoTag.dataWithHexString(hex: resp.resultData) , options: []) as! [String]
-            chipid = arr[0]
-            memberid = arr[1]
-            membertype = "chip-member"
+    enum CodingKeys: String, CodingKey {
+        case membertype = "check-result"
+        case resultData = "result-data"
+    }
+    required public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.membertype = try! container.decode(String.self, forKey: .membertype)
+        if(self.membertype == "chip-id") {
+            // Chip type
+            self.chipid = try container.decode(String.self, forKey: .resultData)
         }
+        else if (self.membertype == "member-id") {
+            // Member type
+            self.memberid = try container.decode(String.self, forKey: .resultData)
+            
+        } else if (self.membertype == "chip-member") {
+            // Our resultData is not valid, so we need to actually decode it as an Array
+            var resultArr = try container.nestedUnkeyedContainer(forKey: .resultData)
+            self.chipid = try resultArr.decode(String.self)
+            self.memberid = try resultArr.decode(String.self)
+        }
+
+        
+    }
+    public func setChall(chall: String) {
+        challenge = chall
     }
 }
