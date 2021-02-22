@@ -47,11 +47,13 @@ public class VivoAPI {
         var resp: String = ""
         AF.request(postPcdChall, method: .post, parameters: pcd, encoder: JSONParameterEncoder.default).responseDecodable(of: VivoPCDResp.self) { response in
             guard let jsonResp = response.value else {
-                completion(resp)
+                print("PCD Resp error")
+                completion("")
                 return
                 
             }
             resp = jsonResp.resp
+            print("PCD resp success: ", resp)
             completion(resp)
         }
         
