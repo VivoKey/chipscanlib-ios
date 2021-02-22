@@ -32,7 +32,7 @@ public class VivoTag {
         subtype = sub
         if(subtype == VivoTag.NTAG4XX) {
             // NDEF
-            part1APDU = NFCISO7816APDU(instructionClass: 0x90, instructionCode: 0x71, p1Parameter: 0x00, p2Parameter: 0x00, data: Data([0x00, 0x00]), expectedResponseLength: 255)
+            part1APDU = NFCISO7816APDU(instructionClass: 0x90, instructionCode: 0x71, p1Parameter: 0x00, p2Parameter: 0x00, data: Data([0x02, 0x00, 0x00]), expectedResponseLength: 255)
             uid = tag.identifier.hexEncodedString()
             print("Tag ID: ", uid)
             
@@ -40,7 +40,7 @@ public class VivoTag {
             // Apex
             // Assume it's selected already, but we do need the UID
             part1APDU = NFCISO7816APDU(instructionClass: 0x00, instructionCode: 0xA9, p1Parameter: 0xA3, p2Parameter: 0x00, data: Data(), expectedResponseLength: 255)
-            selAPDU = NFCISO7816APDU(instructionClass: 0x00, instructionCode: 0xA4, p1Parameter: 0x04, p2Parameter: 0x00, data: Data([0xA0, 0x00, 0x00, 0x07, 0x47, 0x00, 0xCC, 0x68, 0xE8, 0x8C, 0x01]), expectedResponseLength: 255)
+            selAPDU = NFCISO7816APDU(instructionClass: 0x00, instructionCode: 0xA4, p1Parameter: 0x04, p2Parameter: 0x00, data: Data([0x0B, 0xA0, 0x00, 0x00, 0x07, 0x47, 0x00, 0xCC, 0x68, 0xE8, 0x8C, 0x01]), expectedResponseLength: 255)
             
             isotag!.sendCommand(apdu: selAPDU!) {data, sw1, sw2, error in
                 if(nil != error || sw1 != 0x90 || sw2 != 0x00) {
@@ -138,7 +138,7 @@ public class VivoTag {
         var respStr: String = ""
         if(subtype == VivoTag.NTAG4XX) {
             // NTAG
-            part2APDU = NFCISO7816APDU(instructionClass: 0x90, instructionCode: 0xAF, p1Parameter: 000, p2Parameter: 0x00, data: VivoTag.dataWithHexString(hex: pcdResp), expectedResponseLength: 255)
+            part2APDU = NFCISO7816APDU(instructionClass: 0x90, instructionCode: 0xAF, p1Parameter: 000, p2Parameter: 0x00, data: Data(0x20, VivoTag.dataWithHexString(hex: pcdResp)), expectedResponseLength: 255)
             // Actually send
             isotag!.sendCommand(apdu: part2APDU!) {data, sw1, sw2, error in
                 if(nil != error || sw1 != 0x91 || sw2 != 0x00) {
