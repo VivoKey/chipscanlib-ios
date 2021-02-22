@@ -86,10 +86,12 @@ public class VivoTag {
                 var respData = resp.1
                 if (respFlag.contains(NFCISO15693ResponseFlag.error)) {
                     // Got an error flag on the response
+                    print("error flag")
                     completion("")
                 } else {
                     respData.removeFirst()
                     let respStr = respData.hexEncodedString()
+                    print("Success: ", respStr)
                     completion(respStr)
                 }
             
