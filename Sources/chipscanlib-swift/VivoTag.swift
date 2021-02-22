@@ -60,7 +60,7 @@ public class VivoTag {
         type = VivoTag.SPARK_1
         flags15 = NFCISO15693RequestFlag.address
         auth15 = "0002"
-        uid = Data(tag15!.identifier.reversed()).hexEncodedString()
+        uid = tag15!.identifier.hexEncodedString()
         
     }
     public func getUid() -> String {
