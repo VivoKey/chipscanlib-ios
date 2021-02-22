@@ -28,12 +28,13 @@ public class VivoTag {
     // We have two constructors to build a ISO15693 or ISO14443 VivoTag, respectively
     public init(tag: NFCISO7816Tag, sub: Int) {
         isotag = tag
-        type = 14
+        type = VivoTag.SPARK_2
         subtype = sub
         if(subtype == VivoTag.NTAG4XX) {
             // NDEF
             part1APDU = NFCISO7816APDU(instructionClass: 0x90, instructionCode: 0x71, p1Parameter: 0x00, p2Parameter: 0x00, data: Data([0x00, 0x00]), expectedResponseLength: 255)
             uid = tag.identifier.hexEncodedString()
+            print("Tag ID: ", uid)
             
         } else {
             // Apex
@@ -91,6 +92,7 @@ public class VivoTag {
     public func authPart1(completion: @escaping (String) -> Void) -> Void {
         // Gets a PCD challenge from a type 14 chip
         if(type != VivoTag.SPARK_2) {
+            print("Not spark 2")
             completion("")
         }
         var respStr: String = ""
