@@ -72,20 +72,29 @@ public class VivoTag {
             completion("")
         }
         // Apple makes this stuff pretty simple, to be honest
-        let auth15full = auth15!+challenge.substring(to: challenge.index(challenge.startIndex, offsetBy: 20))
+        let auth15full = auth15!+challenge.substring(to: challenge.index(challenge.startIndex, offsetBy: 21))
+        print(auth15full)
         // Use addressed mode
         tag15!.authenticate(requestFlags: flags15!, cryptoSuiteIdentifier: 0, message: VivoTag.dataWithHexString(hex: auth15full)) {response in
-            let resp = try! response.get()
-            let respFlag = resp.0
-            var respData = resp.1
-            if (respFlag.contains(NFCISO15693ResponseFlag.error)) {
-                // Got an error flag on the response
+            switch(response) {
+            case .failure(let error):
+                print(error)
                 completion("")
-            } else {
-                respData.removeFirst()
-                let respStr = respData.hexEncodedString()
-                completion(respStr)
+            case .success(let data):
+                let resp = data
+                let respFlag = resp.0
+                var respData = resp.1
+                if (respFlag.contains(NFCISO15693ResponseFlag.error)) {
+                    // Got an error flag on the response
+                    completion("")
+                } else {
+                    respData.removeFirst()
+                    let respStr = respData.hexEncodedString()
+                    completion(respStr)
+                }
+            
             }
+
         }
         
     }
