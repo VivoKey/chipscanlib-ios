@@ -103,6 +103,7 @@ public class VivoTag {
                 if(nil != error || sw1 != 0x91 || sw2 != 0xAF) {
                     // Error received
                     respStr = ""
+                    print("Pcd chall get error, sw1: ", sw1, "sw2: ", sw2)
                     completion(respStr)
                     return
                 }
