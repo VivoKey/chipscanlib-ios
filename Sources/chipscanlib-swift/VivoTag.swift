@@ -13,7 +13,7 @@ public class VivoTag {
     var isotag: NFCISO7816Tag?
     var tag15: NFCISO15693Tag?
     var type: Int
-    var uid: String
+    var uid: String = ""
     var part1APDU: NFCISO7816APDU?
     var part2APDU: NFCISO7816APDU?
     var selAPDU: NFCISO7816APDU?
