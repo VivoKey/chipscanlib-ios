@@ -72,7 +72,7 @@ public class VivoTag {
             completion("")
         }
         // Apple makes this stuff pretty simple, to be honest
-        let auth15full = auth15!+challenge.substring(to: challenge.index(challenge.startIndex, offsetBy: 21))
+        let auth15full = auth15!+challenge.substring(to: challenge.index(challenge.startIndex, offsetBy: 20))
         print(auth15full)
         // Use addressed mode
         tag15!.authenticate(requestFlags: flags15!, cryptoSuiteIdentifier: 0, message: VivoTag.dataWithHexString(hex: auth15full)) {response in
