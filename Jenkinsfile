@@ -18,7 +18,7 @@ pipeline {
 
         stage ('Test') {
             steps {
-				sh "xcodebuild -scheme chipscanlib-swift -resultBundlePath ./tests.xcresult -destination 'platform=iOS Simulator,name=iPhone 11,OS=latest' clean test"
+				sh "xcodebuild -scheme chipscanlibswift -resultBundlePath ./tests.xcresult -destination 'platform=iOS Simulator,name=iPhone 11,OS=latest' clean test"
 				sh '''
 					eval "$(rbenv init -)"
 					rbenv shell 2.7.2
